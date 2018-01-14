@@ -7,7 +7,7 @@
         class="home-header-left-item">
         <el-button icon="document" size="mini">Boilerplates</el-button>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="empty">Empty</el-dropdown-item>
+          <el-dropdown-item command="empty">空白</el-dropdown-item>
           <el-dropdown-item command="vue">Vue</el-dropdown-item>
           <el-dropdown-item command="vue-jsx">Vue JSX</el-dropdown-item>
           <el-dropdown-item command="react">React</el-dropdown-item>
@@ -24,7 +24,9 @@
         size="mini">
         Add library
       </el-button>
+      <!--
       <span class="home-header-left-item changelog-indicator"></span>
+      -->
     </div>
     <div class="home-header-middle home-header-block pan-toggles">
       <span
@@ -100,12 +102,14 @@
               <save-icon></save-icon> Update Gist
             </div>
           </el-dropdown-item>
+          <!--
           <el-dropdown-item style="padding: 0;">
             <a class="el-dropdown-menu__item fake-anchor" target="_blank" href="https://github.com/egoist/codepan"><link2-icon></link2-icon> Source Code</a>
           </el-dropdown-item>
           <el-dropdown-item style="padding: 0;">
             <a class="el-dropdown-menu__item fake-anchor" target="_blank" href="https://twitter.com/_egoistlily"><twitter-icon></twitter-icon> Follow me on Twitter</a>
           </el-dropdown-item>
+          -->
         </el-dropdown-menu>
       </el-dropdown>
     </div>
