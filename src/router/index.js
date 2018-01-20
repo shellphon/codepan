@@ -26,6 +26,10 @@ const router = new Router({
       name: 'boilerplate',
       path: '/boilerplate/:boilerplate',
       component: EditorPage
+    },{
+      name: 'code',
+      path: '/code/:codeName',
+      component: EditorPage
     },
     {
       name: 'github-success',

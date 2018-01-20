@@ -52,9 +52,10 @@
   async function handleRouteChange(to, vm) {
     let boilerplate
     let gist
+    let code
 
     const { name } = to
-
+console.log(to.params);
     if (name === 'home') {
       boilerplate = to.query.boilerplate
       gist = to.query.gist
@@ -62,6 +63,8 @@
       boilerplate = to.params.boilerplate
     } else if (name === 'gist') {
       gist = to.params.gist
+    } else if( name === 'code') {
+      code = to.params.codeName
     }
 
     if (boilerplate) {
@@ -69,6 +72,9 @@
       Event.$emit('refresh-editor')
     } else if (gist) {
       await vm.setGist(gist)
+      Event.$emit('refresh-editor')
+    } else if (code) {
+      await vm.setCode(code)
       Event.$emit('refresh-editor')
     }
 
@@ -130,7 +136,7 @@
       })
     },
     methods: {
-      ...mapActions(['setBoilerplate', 'setGist', 'showPans']),
+      ...mapActions(['setBoilerplate', 'setGist', 'setCode', 'showPans']),
       isVisible(pan) {
         return this.visiblePans.indexOf(pan) !== -1
       },

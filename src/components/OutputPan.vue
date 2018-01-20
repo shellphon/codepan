@@ -104,6 +104,11 @@
       Event.$on('save-gist', update => {
         this.saveGist({ token: this.githubToken, update })
       })
+
+      Event.$on('save-code', codeName => {
+        this.saveCode({ codeName })
+      })
+
       Event.$on('save-anonymous-gist', () => {
         this.saveGist()
       })
@@ -112,7 +117,7 @@
       window.removeEventListener('message', this.listenIframe)
     },
     methods: {
-      ...mapActions(['addLog', 'clearLogs', 'setActivePan', 'setBoilerplate', 'editorSaved', 'editorSaving', 'editorSavingError']),
+      ...mapActions(['addLog', 'clearLogs', 'setActivePan', 'setBoilerplate', 'editorSaved', 'editorSaving', 'editorSavingError', 'setCodeMenu']),
       getHumanlizedTransformerName,
 
       async listenIframe({ data = {} }) {
@@ -164,6 +169,54 @@
           body
         })
         this.iframeStatus = 'loading'
+      },
+
+      async saveCode({codeName}) {
+        this.editorSaving()
+        try {
+          const files = makeGist({
+            js: this.js,
+            css: this.css,
+            html: this.html
+          }, {
+            showPans: this.visiblePans,
+            activePan: this.activePan
+          })
+          const params = {}
+         
+          const codeId = this.$route.params.codeName
+          const url = codeId?`/api/code/update`:`/api/code/create`
+          const method = `POST`
+          const { data } = await axios(url, {
+            params,
+            method,
+            data: {
+              name: codeName? codeName: codeId,
+              files
+            }
+          })
+
+          if (!codeName) {
+            this.editorSaved()
+          } else {
+           // this.$router.push(`/code/${codeName}`)
+           console.log('新建案例成功');
+             this.$router.push({
+                name: "code",
+                params: {
+                  codeName
+                }
+              });
+            this.allCode();
+          }
+        } catch (err) {
+          this.editorSavingError()
+          console.log('保存失败',err);
+        }
+      },
+
+      async allCode (){
+        await this.setCodeMenu();
       },
 
       async saveGist({ token, update } = {}) {

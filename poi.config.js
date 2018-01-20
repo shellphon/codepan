@@ -8,6 +8,9 @@ const cdns = {
 }
 
 module.exports = {
+  devServer: {
+	  proxy: "http://127.0.0.1:3000/api"
+  },
   extendWebpack(config) {
     config.module.set('noParse', /babel-preset-vue/)
 

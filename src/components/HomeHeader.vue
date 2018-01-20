@@ -16,6 +16,15 @@
           <el-dropdown-item command="svelte">Svelte</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-dropdown
+        @command="readMenu"
+        trigger="click"
+        class="home-header-left-item">
+        <el-button icon="document" size="mini">案例</el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-for="item in menu" :key="item" :command="item">{{item}}</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       <el-button
         class="home-header-left-item"
         style="margin-right:0"
@@ -92,6 +101,16 @@
               <file-icon></file-icon> Save Anonymous Gist
             </div>
           </el-dropdown-item>
+          <el-dropdown-item command="save-code">
+            <div class="fake-anchor">
+              <file-icon></file-icon> 存档
+            </div>
+          </el-dropdown-item>
+          <el-dropdown-item v-tippy="{title: '案例修改', position: 'left', arrow: true}" v-if="canUpdateCode" command="update-code">
+            <div class="fake-anchor">
+              <save-icon></save-icon> 修改案例
+            </div>
+          </el-dropdown-item>
           <el-dropdown-item command="save-gist">
             <div class="fake-anchor">
               <file-plus-icon></file-plus-icon> Save New Gist
@@ -136,27 +155,43 @@
 
   export default {
     computed: {
-      ...mapState(['visiblePans', 'githubToken', 'editorStatus']),
+      ...mapState(['visiblePans', 'githubToken', 'editorStatus', 'menu']),
       ...mapState({
         totalLogsCount: state => state.logs.length
       }),
+      
       canUpdateGist() {
         return this.$route.name === 'gist' && this.githubToken
+      },
+
+      canUpdateCode() {
+        return this.$route.name === 'code'
       }
     },
     mounted() {
-      window.addEventListener('keydown', this.handleKeydown)
+      window.addEventListener('keydown', this.handleKeydown);
+      this.allCode()
     },
     beforeDestroy() {
       window.removeEventListener('keydown', this.handleKeydown)
     },
     methods: {
-      ...mapActions(['togglePan', 'updateCode']),
+      ...mapActions(['togglePan', 'updateCode', 'setCodeMenu']),
       handleKeydown(e) {
         if (e.which === 83 && (e.metaKey || e.ctrlKey)) {
           e.preventDefault()
           this.runCode()
         }
+      },
+      async allCode (){
+        await this.setCodeMenu();
+      },
+      async promptCodeName() {
+        const { value } = await MessageBox.prompt('请输入案例名称:', '提交', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel'
+        })
+        Event.$emit('save-code', value);
       },
       async promptLibrary() {
         const { value } = await MessageBox.prompt('Type an npm package name:', 'Add Library', {
@@ -171,6 +206,15 @@
           await this.updateCode({ type: 'html', code })
           Event.$emit('refresh-editor')
         }
+      },
+      async readMenu(codeName) {
+        //console.log(codeName);
+        this.$router.push({
+          name: "code",
+          params: {
+            codeName
+          }
+        })
       },
       async setBoilerplate(boilerplate) {
         this.$router.push({
@@ -195,6 +239,10 @@
           }
         } else if (command === 'save-anonymous-gist') {
           Event.$emit('save-anonymous-gist')
+        } else if (command === 'save-code') {
+          this.promptCodeName();
+        } else if (command === 'update-code') {
+         Event.$emit('save-code');
         } else if (command === 'update-gist') {
           Event.$emit('save-gist', true)
         } else if (command === 'github-login') {

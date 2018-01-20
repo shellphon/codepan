@@ -56,6 +56,7 @@ const store = new Vuex.Store({
   state: {
     ...emptyPans(),
     logs: [],
+    menu:[],
     visiblePans: ['html', 'js', 'output'],
     activePan: 'js',
     autoRun: false,
@@ -96,6 +97,9 @@ const store = new Vuex.Store({
     },
     SET_EDITOR_STATUS(state, status) {
       state.editorStatus = status
+    },
+    SET_MENU(state, menu) {
+      state.menu = menu.data;
     }
   },
   actions: {
@@ -145,6 +149,28 @@ const store = new Vuex.Store({
       }
       commit('UPDATE_TRANSFORMER', { type, transformer })
     },
+    async setCodeMenu({ commit }) {
+      let menus;
+      try {
+        menus = await axios.get(`/api/code/all`)
+        .then(res => res.data)
+      } catch (err) {
+        console.log('获取案例列表失败',err);
+       /*  if (err.response) {
+          notie.alert({
+            type: 'error',
+            text: err.response.data.message,
+            time: 5
+          })
+        } else {
+          notie.alert({
+            type: 'error',
+            text: err.message
+          })
+        } */
+      }
+      commit('SET_MENU', menus);
+    },
     // todo: simplify this action
     async setBoilerplate({ dispatch }, boilerplate) {
       progress.start()
@@ -188,6 +214,37 @@ const store = new Vuex.Store({
       })
 
       progress.done()
+    },
+    async setCode({ commit, dispatch, state }, id) {
+      const params = {}
+
+      let files
+      try {
+        files = await axios.get(`/api/code/detail/${id}`, {
+          params
+        }).then(res => res.data.files)
+      } catch (err) {
+        //progress.done()
+        console.log('获取案例详细失败',err);
+      }
+
+      const main = {
+        html: {},
+        css: {},
+        js: {},
+        ...(files['index.js'] ? req(files['index.js'].content) : {}),
+        ...(files['codepan.js'] ? req(files['codepan.js'].content) : {}),
+        ...(files['codepan.json'] ? JSON.parse(files['codepan.json'].content) : {})
+      }
+      for (const type of ['html', 'js', 'css']) {
+        if (!main[type].code) {
+          const filename = main[type].filename || getFileNameByLang[type]
+          if (files[filename]) {
+            main[type].code = files[filename].content
+          }
+        }
+      }
+      await dispatch('setBoilerplate', main)
     },
     async setGist({ commit, dispatch, state }, id) {
       const params = {}
