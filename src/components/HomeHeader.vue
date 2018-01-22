@@ -5,7 +5,7 @@
         @command="setBoilerplate"
         trigger="click"
         class="home-header-left-item">
-        <el-button icon="document" size="mini">Boilerplates</el-button>
+        <el-button icon="document" size="mini">模板</el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="empty">空白</el-dropdown-item>
           <el-dropdown-item command="vue">Vue</el-dropdown-item>
@@ -31,7 +31,7 @@
         icon="plus"
         @click="promptLibrary"
         size="mini">
-        Add library
+        添加开源js
       </el-button>
       <!--
       <span class="home-header-left-item changelog-indicator"></span>
@@ -90,6 +90,7 @@
         trigger="click">
         <el-button icon="more" size="mini"></el-button>
         <el-dropdown-menu slot="dropdown">
+          <!--
           <el-dropdown-item command="github-login">
             <div class="fake-anchor">
               <log-out-icon v-if="githubToken" />
@@ -101,6 +102,7 @@
               <file-icon></file-icon> Save Anonymous Gist
             </div>
           </el-dropdown-item>
+          -->
           <el-dropdown-item command="save-code">
             <div class="fake-anchor">
               <file-icon></file-icon> 存档
@@ -111,6 +113,7 @@
               <save-icon></save-icon> 修改案例
             </div>
           </el-dropdown-item>
+          <!--
           <el-dropdown-item command="save-gist">
             <div class="fake-anchor">
               <file-plus-icon></file-plus-icon> Save New Gist
@@ -121,7 +124,6 @@
               <save-icon></save-icon> Update Gist
             </div>
           </el-dropdown-item>
-          <!--
           <el-dropdown-item style="padding: 0;">
             <a class="el-dropdown-menu__item fake-anchor" target="_blank" href="https://github.com/egoist/codepan"><link2-icon></link2-icon> Source Code</a>
           </el-dropdown-item>
