@@ -25,7 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.static(path.resolve(__dirname, '../dist')));
 
-app.use('/', index);
+//app.use('/', index);
+app.use('/code/*', express.static(path.resolve(__dirname, '../dist')));
+
 app.use('/users', users);
 
 app.use('/api', api);
